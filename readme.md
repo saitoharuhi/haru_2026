@@ -13,5 +13,14 @@
     実行すると、candump can0に操縦データが送られてくる。candump can0を実行する。
 
 ## メモ
-ros2 topic list
+ls /dev/ttyACM*
 canモジュールのポートを調べるコマンドを毎回実行する。抜き差しするとポート番号が変わる可能性あり。
+# canを見るには
+
+sudo modprobe slcan
+sudo modprobe can
+sudo modprobe can_raw
+sudo slcand -o -c -s8 /dev/ttyACM0 can0
+sudo ip link set can0 up
+candump can0
+一行ずつコマンドを実行すること。また、ls /dev/ttyACM*で刺さってるか確認
