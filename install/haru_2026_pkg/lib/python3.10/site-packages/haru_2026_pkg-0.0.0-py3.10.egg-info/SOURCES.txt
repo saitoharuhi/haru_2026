@@ -11,6 +11,7 @@ setup.py
 haru_2026_pkg/__init__.py
 haru_2026_pkg/can_node.py
 haru_2026_pkg/ps3_node.py
+haru_2026_pkg/ps4_can_node.py
 haru_2026_pkg/roboware_node.py
 resource/haru_2026_pkg
 test/test_copyright.py

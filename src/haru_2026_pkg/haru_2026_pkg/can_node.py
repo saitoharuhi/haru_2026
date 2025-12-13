@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, UInt8MultiArray
 from geometry_msgs.msg import Twist
 import can, struct
 
@@ -21,6 +21,14 @@ class CANNode(Node):
             Twist,
             'cmd_vel_ps3',
             self.send_can_message_callback,
+            10
+        )
+
+        # 購読: ボタンからのCAN送信用トピック
+        self.btn_subscription = self.create_subscription(
+            UInt8MultiArray,
+            'cmd_buttons',
+            self.send_button_can_callback,
             10
         )
 
@@ -45,6 +53,31 @@ class CANNode(Node):
             self.get_logger().error(f"CAN送信失敗: {e}")
         except struct.error as e:
             self.get_logger().error(f"データ変換エラー: {e}")
+
+    def send_button_can_callback(self, msg: UInt8MultiArray):
+        # msg.data は 0~255 のバイトリストを期待（先頭は count）
+        data_list = list(msg.data)
+        if not data_list:
+            self.get_logger().warn("cmd_buttons が空です")
+            return
+        # Trim or pad to 8 bytes
+        if len(data_list) > 8:
+            self.get_logger().warn(f"cmd_buttons 長すぎるので先頭8バイトに切り詰めます (len={len(data_list)})")
+            data_list = data_list[:8]
+        # Ensure each is 0-255
+        try:
+            data_bytes = bytes([int(x) & 0xFF for x in data_list])
+        except Exception as e:
+            self.get_logger().error(f"cmd_buttons のバイト変換に失敗: {e}")
+            return
+
+        try:
+            can_msg = can.Message(arbitration_id=0x100, data=data_bytes, is_extended_id=False)
+            self.bus.send(can_msg)
+            hexstr = ' '.join(f"{b:02X}" for b in data_bytes)
+            self.get_logger().info(f"送信[0x100] data: {hexstr}")
+        except can.CanError as e:
+            self.get_logger().error(f"CAN送信失敗 (0x100): {e}")
 
     def timer_callback(self):
         if not self.bus:

@@ -1,0 +1,31 @@
+[0.829s] Invoking command in '/home/altair/haru_2026/src/haru_2026_pkg': PYTHONPATH=/home/altair/haru_2026/build/haru_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/haru_2026_pkg build --build-base /home/altair/haru_2026/build/haru_2026_pkg/build install --record /home/altair/haru_2026/build/haru_2026_pkg/install.log --single-version-externally-managed install_data
+[1.118s] running egg_info
+[1.119s] writing ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/PKG-INFO
+[1.119s] writing dependency_links to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/dependency_links.txt
+[1.120s] writing entry points to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/entry_points.txt
+[1.120s] writing requirements to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/requires.txt
+[1.120s] writing top-level names to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/top_level.txt
+[1.123s] reading manifest file '../../build/haru_2026_pkg/haru_2026_pkg.egg-info/SOURCES.txt'
+[1.125s] writing manifest file '../../build/haru_2026_pkg/haru_2026_pkg.egg-info/SOURCES.txt'
+[1.125s] running build
+[1.125s] running build_py
+[1.125s] copying haru_2026_pkg/roboware_node.py -> /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg
+[1.125s] copying haru_2026_pkg/can_node.py -> /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg
+[1.126s] running install
+[1.126s] running install_lib
+[1.127s] copying /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg/roboware_node.py -> /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg
+[1.127s] copying /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg/can_node.py -> /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg
+[1.128s] byte-compiling /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/roboware_node.py to roboware_node.cpython-310.pyc
+[1.128s] Sorry: IndentationError: unexpected indent (roboware_node.py, line 18)
+[1.128s] byte-compiling /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/can_node.py to can_node.cpython-310.pyc
+[1.130s] running install_data
+[1.130s] running install_egg_info
+[1.132s] removing '/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[1.132s] Copying ../../build/haru_2026_pkg/haru_2026_pkg.egg-info to /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg-0.0.0-py3.10.egg-info
+[1.133s] running install_scripts
+[1.157s] Installing button_cannode script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.158s] Installing can_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.158s] Installing ps3_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.158s] Installing roboware_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.158s] writing list of installed files to '/home/altair/haru_2026/build/haru_2026_pkg/install.log'
+[1.182s] Invoked command in '/home/altair/haru_2026/src/haru_2026_pkg' returned '0': PYTHONPATH=/home/altair/haru_2026/build/haru_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/haru_2026_pkg build --build-base /home/altair/haru_2026/build/haru_2026_pkg/build install --record /home/altair/haru_2026/build/haru_2026_pkg/install.log --single-version-externally-managed install_data

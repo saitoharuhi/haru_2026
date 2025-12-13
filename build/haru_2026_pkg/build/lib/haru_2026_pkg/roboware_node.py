@@ -2,7 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Int32MultiArray, UInt8MultiArray
 
 class RobowereNode(Node):
     def __init__(self):
@@ -11,12 +11,22 @@ class RobowereNode(Node):
 
         # パブリッシャ
         self.cmd_pub = self.create_publisher(Twist, 'cmd_vel_ps3', 10)
+        # ボタン→CAN送信用トピック
+        self.btn_pub = self.create_publisher(UInt8MultiArray, 'cmd_buttons', 10)
 
         # サブスクライバ
         self.create_subscription(
             Float32MultiArray,
             'ps3_axes',
             self.axis_callback,
+            10
+        )
+
+        # ボタン購読して CAN 送信用トピックへ変換
+        self.create_subscription(
+            Int32MultiArray,
+            'ps3_buttons',
+            self.button_callback,
             10
         )
 
@@ -53,6 +63,22 @@ class RobowereNode(Node):
         self.get_logger().info(
             f"[DEBUG] Vx: {vx_mm_s:+.1f} mm/s | Vy: {vy_mm_s:+.1f} mm/s | Omega: {omega_deg_s:+.1f} deg/s"
         )
+
+    def button_callback(self, msg: Int32MultiArray):
+        # msg.data は押されているボタンのインデックスリスト
+        indices = list(msg.data)
+        # CAN 1フレームは最大8バイト。ここでは 1バイト目に count、残りにインデックスを入れる方式とする
+        max_indices = 7
+        count = min(len(indices), max_indices)
+        data_bytes = [count]
+        for i in range(count):
+            idx = int(indices[i]) & 0xFF
+            data_bytes.append(idx)
+        # pad to at most 8 bytes is not necessary for UInt8MultiArray, but CAN send will trim
+        uba = UInt8MultiArray()
+        uba.data = data_bytes
+        self.btn_pub.publish(uba)
+        self.get_logger().info(f"ボタン送信準備: count={count} indices={data_bytes[1:]}")
 
 def main(args=None):
     rclpy.init(args=args)

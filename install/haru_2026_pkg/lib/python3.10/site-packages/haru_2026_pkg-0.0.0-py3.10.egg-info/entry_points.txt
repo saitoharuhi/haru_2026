@@ -1,5 +1,7 @@
 [console_scripts]
+button_cannode = haru_2026_pkg.button_cannode:main
 can_node = haru_2026_pkg.can_node:main
 ps3_node = haru_2026_pkg.ps3_node:main
+ps4_can_node = haru_2026_pkg.ps4_can_node:main
 roboware_node = haru_2026_pkg.roboware_node:main
 

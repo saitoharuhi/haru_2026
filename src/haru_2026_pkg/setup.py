@@ -27,7 +27,8 @@ setup(
             'ps3_node = haru_2026_pkg.ps3_node:main',
             'roboware_node = haru_2026_pkg.roboware_node:main',
             'can_node = haru_2026_pkg.can_node:main',
-            'button_cannode = haru_2026_pkg.button_cannode:main'
+            'button_cannode = haru_2026_pkg.button_cannode:main',
+            'ps4_can_node = haru_2026_pkg.ps4_can_node:main'
         ],
     },
 )
