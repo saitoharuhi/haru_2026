@@ -3,8 +3,8 @@
     haru_2026に移動　
 # cd haru_2026
     source install/setup.bashでrosを動かす
-    ps3_nodeとroboware_nodeと別pcでcan_nodeを動かす
-# ros2 run haru_2026_pkg ps3_node　
+    ps3_nodeとroboware_nodeと別PCでcan_nodeを動かす
+# ros2 run haru_2026_pkg ps3_node
     ps3コントローラーの情報を読み取りトピックで次に送信する
 # ros2 run haru_2026_pkg roboware_node
     ps3_nodeから送られてきたものをVx,Vy,ωに変換して次に送信する

@@ -1,0 +1,5 @@
+  File "/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/ps4_node.py", line 56
+    if self .joystick.get_numhats() > 0
+                                       ^
+SyntaxError: expected ':'
+

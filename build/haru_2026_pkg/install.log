@@ -1,11 +1,13 @@
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/ps3_node.py
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/roboware_node.py
-/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/ps4_can_node.py
+/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/ps4_node.py
+/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/ps4_robo_node.py
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/can_node.py
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__init__.py
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/ps3_node.cpython-310.pyc
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/roboware_node.cpython-310.pyc
-/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/ps4_can_node.cpython-310.pyc
+/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/ps4_node.cpython-310.pyc
+/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/ps4_robo_node.cpython-310.pyc
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/can_node.cpython-310.pyc
 /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/__pycache__/__init__.cpython-310.pyc
 /home/altair/haru_2026/install/haru_2026_pkg/share/ament_index/resource_index/packages/haru_2026_pkg
@@ -20,5 +22,6 @@
 /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/button_cannode
 /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/can_node
 /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/ps3_node
-/home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/ps4_can_node
+/home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/ps4_node
+/home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/ps4_robo_node
 /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg/roboware_node
