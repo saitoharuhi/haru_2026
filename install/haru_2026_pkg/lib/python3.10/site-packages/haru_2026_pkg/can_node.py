@@ -55,29 +55,82 @@ class CANNode(Node):
             self.get_logger().error(f"データ変換エラー: {e}")
 
     def send_button_can_callback(self, msg: UInt8MultiArray):
-        # msg.data は 0~255 のバイトリストを期待（先頭は count）
+        # msg.data は多様な形式で来る可能性があるため柔軟に扱う
+        # 1) 完全なボタン状態配列 (長さ >= 18): 各インデックスが 0/1
+        # 2) count + indices 形式 (roboware_node の出力): [count, idx1, idx2, ...]
+        # 3) 8バイトの既成ブロック (btn0-7 等)
+
         data_list = list(msg.data)
         if not data_list:
             self.get_logger().warn("cmd_buttons が空です")
             return
-        # Trim or pad to 8 bytes
-        if len(data_list) > 8:
-            self.get_logger().warn(f"cmd_buttons 長すぎるので先頭8バイトに切り詰めます (len={len(data_list)})")
-            data_list = data_list[:8]
-        # Ensure each is 0-255
-        try:
-            data_bytes = bytes([int(x) & 0xFF for x in data_list])
-        except Exception as e:
-            self.get_logger().error(f"cmd_buttons のバイト変換に失敗: {e}")
-            return
 
+        # Reconstruct full btn_state (indices 0..17 -> up to D-pad)
+        btn_state = [0] * 18
+
+        # Case A: full state
+        if len(data_list) >= 18 and all((int(x) in (0, 1) for x in data_list[:18])):
+            for i in range(18):
+                btn_state[i] = 1 if int(data_list[i]) else 0
+
+        # Case B: count + indices (first element small count)
+        elif 1 <= len(data_list) <= 8 and int(data_list[0]) <= 7 and len(data_list) == (1 + int(data_list[0])):
+            count = int(data_list[0])
+            for i in range(count):
+                idx = int(data_list[1 + i])
+                if 0 <= idx < len(btn_state):
+                    btn_state[idx] = 1
+
+        # Case C: 8-byte block -> assume btn0-7
+        elif len(data_list) == 8 and all(0 <= int(x) <= 1 for x in data_list):
+            for i in range(8):
+                btn_state[i] = 1 if int(data_list[i]) else 0
+
+        else:
+            # その他: try to interpret any small list as indices
+            for v in data_list:
+                try:
+                    idx = int(v)
+                    if 0 <= idx < len(btn_state):
+                        btn_state[idx] = 1
+                except Exception:
+                    continue
+
+        # Build CAN payloads according to user spec
         try:
-            can_msg = can.Message(arbitration_id=0x100, data=data_bytes, is_extended_id=False)
-            self.bus.send(can_msg)
-            hexstr = ' '.join(f"{b:02X}" for b in data_bytes)
-            self.get_logger().info(f"送信[0x100] data: {hexstr}")
+            # 0x100: ○(2), △(3), ×(1), □(0), Dpad Up(14), Down(15), Left(16), Right(17)
+            can100 = [
+                btn_state[2], btn_state[3], btn_state[1], btn_state[0],
+                btn_state[14], btn_state[15], btn_state[16], btn_state[17]
+            ]
+
+            # 0x101: R1(5), R2(7), R3(11), L1(4), L2(6), L3(10), pad, pad
+            can101 = [
+                btn_state[5], btn_state[7], btn_state[11],
+                btn_state[4], btn_state[6], btn_state[10],
+                0, 0
+            ]
+
+            # 0x102: PS(12), SHARE(8), OPTIONS(9), pad x5
+            can102 = [
+                btn_state[12], btn_state[8], btn_state[9], 0, 0, 0, 0, 0
+            ]
+
+            # Send messages
+            m100 = can.Message(arbitration_id=0x100, data=bytes(can100), is_extended_id=False)
+            self.bus.send(m100)
+            self.get_logger().info(f"送信[0x100] {can100}")
+
+            m101 = can.Message(arbitration_id=0x101, data=bytes(can101), is_extended_id=False)
+            self.bus.send(m101)
+            self.get_logger().info(f"送信[0x101] {can101}")
+
+            m102 = can.Message(arbitration_id=0x102, data=bytes(can102), is_extended_id=False)
+            self.bus.send(m102)
+            self.get_logger().info(f"送信[0x102] {can102}")
+
         except can.CanError as e:
-            self.get_logger().error(f"CAN送信失敗 (0x100): {e}")
+            self.get_logger().error(f"CAN送信失敗: {e}")
 
     def timer_callback(self):
         if not self.bus:
