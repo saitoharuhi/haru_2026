@@ -67,18 +67,61 @@ class RobowereNode(Node):
     def button_callback(self, msg: Int32MultiArray):
         # msg.data は押されているボタンのインデックスリスト
         indices = list(msg.data)
+
+        # PS4 の hat コードやボタン番号を can_node が期待する 0..17 のインデックスへマップする
+        mapped = []
+        for raw in indices:
+            try:
+                r = int(raw)
+            except Exception:
+                continue
+
+            # HAT 特殊コード -> D-pad indices
+            if r == 100:
+                mapped.append(14)  # Up
+                continue
+            if r == 101:
+                mapped.append(15)  # Down
+                continue
+            if r == 102:
+                mapped.append(16)  # Left
+                continue
+            if r == 103:
+                mapped.append(17)  # Right
+                continue
+
+            # Face button remapping (PS4 joystick button numbering -> can_node が期待する indices)
+            # PS4 raw: 0:×, 1:○, 2:□, 3:△
+            # can_node expects: 0->□, 1->×, 2->○, 3->△
+            if r == 0:
+                mapped.append(1)  # × -> index 1
+                continue
+            if r == 1:
+                mapped.append(2)  # ○ -> index 2
+                continue
+            if r == 2:
+                mapped.append(0)  # □ -> index 0
+                continue
+            if r == 3:
+                mapped.append(3)  # △ -> index 3
+                continue
+
+            # その他のボタンはそのまま使う（例: L1=4,R1=5,L2=6,R2=7,L3=10,R3=11,SHARE=8,OPTIONS=9,PS=12）
+            if 0 <= r <= 17:
+                mapped.append(r)
+
         # CAN 1フレームは最大8バイト。ここでは 1バイト目に count、残りにインデックスを入れる方式とする
         max_indices = 7
-        count = min(len(indices), max_indices)
+        count = min(len(mapped), max_indices)
         data_bytes = [count]
         for i in range(count):
-            idx = int(indices[i]) & 0xFF
+            idx = int(mapped[i]) & 0xFF
             data_bytes.append(idx)
         # pad to at most 8 bytes is not necessary for UInt8MultiArray, but CAN send will trim
         uba = UInt8MultiArray()
         uba.data = data_bytes
         self.btn_pub.publish(uba)
-        self.get_logger().info(f"ボタン送信準備: count={count} indices={data_bytes[1:]}")
+        self.get_logger().info(f"ボタン送信準備: count={count} indices={data_bytes[1:]} (mapped from {indices})")
 
 def main(args=None):
     rclpy.init(args=args)

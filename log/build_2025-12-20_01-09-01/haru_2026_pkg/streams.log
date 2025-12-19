@@ -1,0 +1,29 @@
+[1.044s] Invoking command in '/home/altair/haru_2026/src/haru_2026_pkg': PYTHONPATH=/home/altair/haru_2026/build/haru_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/haru_2026_pkg build --build-base /home/altair/haru_2026/build/haru_2026_pkg/build install --record /home/altair/haru_2026/build/haru_2026_pkg/install.log --single-version-externally-managed install_data
+[1.409s] running egg_info
+[1.410s] writing ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/PKG-INFO
+[1.411s] writing dependency_links to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/dependency_links.txt
+[1.411s] writing entry points to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/entry_points.txt
+[1.411s] writing requirements to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/requires.txt
+[1.411s] writing top-level names to ../../build/haru_2026_pkg/haru_2026_pkg.egg-info/top_level.txt
+[1.414s] reading manifest file '../../build/haru_2026_pkg/haru_2026_pkg.egg-info/SOURCES.txt'
+[1.415s] writing manifest file '../../build/haru_2026_pkg/haru_2026_pkg.egg-info/SOURCES.txt'
+[1.416s] running build
+[1.416s] running build_py
+[1.416s] copying haru_2026_pkg/can_node.py -> /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg
+[1.417s] running install
+[1.417s] running install_lib
+[1.419s] copying /home/altair/haru_2026/build/haru_2026_pkg/build/lib/haru_2026_pkg/can_node.py -> /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg
+[1.420s] byte-compiling /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg/can_node.py to can_node.cpython-310.pyc
+[1.423s] running install_data
+[1.423s] running install_egg_info
+[1.425s] removing '/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[1.425s] Copying ../../build/haru_2026_pkg/haru_2026_pkg.egg-info to /home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages/haru_2026_pkg-0.0.0-py3.10.egg-info
+[1.427s] running install_scripts
+[1.457s] Installing button_cannode script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.457s] Installing can_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.457s] Installing ps3_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.457s] Installing ps4_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.458s] Installing ps4_robo_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.458s] Installing roboware_node script to /home/altair/haru_2026/install/haru_2026_pkg/lib/haru_2026_pkg
+[1.458s] writing list of installed files to '/home/altair/haru_2026/build/haru_2026_pkg/install.log'
+[1.494s] Invoked command in '/home/altair/haru_2026/src/haru_2026_pkg' returned '0': PYTHONPATH=/home/altair/haru_2026/build/haru_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/altair/haru_2026/install/haru_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/haru_2026_pkg build --build-base /home/altair/haru_2026/build/haru_2026_pkg/build install --record /home/altair/haru_2026/build/haru_2026_pkg/install.log --single-version-externally-managed install_data

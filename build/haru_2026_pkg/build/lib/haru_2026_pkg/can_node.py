@@ -56,17 +56,20 @@ class CANNode(Node):
 
     def send_button_can_callback(self, msg: UInt8MultiArray):
         # msg.data は多様な形式で来る可能性があるため柔軟に扱う
-        # 1) 完全なボタン状態配列 (長さ >= 18): 各インデックスが 0/1
-        # 2) count + indices 形式 (roboware_node の出力): [count, idx1, idx2, ...]
-        # 3) 8バイトの既成ブロック (btn0-7 等)
-
         data_list = list(msg.data)
         if not data_list:
             self.get_logger().warn("cmd_buttons が空です")
             return
 
+        # デバッグ: 受信生データを出力
+        self.get_logger().info(f"cmd_buttons raw: {data_list}")
+
         # Reconstruct full btn_state (indices 0..17 -> up to D-pad)
         btn_state = [0] * 18
+
+        # NOTE: hat (x,y) 判定は ambiguous（count+indices と衝突する）ため
+        # 他のケース（full state / count+indices / 8-byte block / indices list）を先に処理し、
+        # それらに当てはまらない場合に限定して hat と見なす。
 
         # Case A: full state
         if len(data_list) >= 18 and all((int(x) in (0, 1) for x in data_list[:18])):
@@ -96,6 +99,28 @@ class CANNode(Node):
                 except Exception:
                     continue
 
+        # 上のどのケースにも当てはまらず（btn_state がまだ 0 のまま）、かつ長さ==2 で値が -1/0/1 の組合せなら hat と判断
+        if sum(btn_state) == 0 and len(data_list) == 2 and all(isinstance(x, (int, float)) or (isinstance(x, str) and x.lstrip('-').isdigit()) for x in data_list):
+            try:
+                x = int(float(data_list[0]))
+                y = int(float(data_list[1]))
+                if x in (-1, 0, 1) and y in (-1, 0, 1):
+                    # hat 座標らしい -> D-pad をセット
+                    if y == 1:
+                        btn_state[14] = 1  # Up
+                    if y == -1:
+                        btn_state[15] = 1  # Down
+                    if x == -1:
+                        btn_state[16] = 1  # Left
+                    if x == 1:
+                        btn_state[17] = 1  # Right
+                    self.get_logger().info(f"Detected HAT format -> x={x}, y={y}")
+            except Exception:
+                pass
+
+        # デバッグ: btn_state 全体をログ出力（0..17）
+        self.get_logger().info("btn_state[0..17]: " + ' '.join(str(b) for b in btn_state))
+
         # Build CAN payloads according to user spec
         try:
             # 0x100: ○(2), △(3), ×(1), □(0), Dpad Up(14), Down(15), Left(16), Right(17)
@@ -103,17 +128,18 @@ class CANNode(Node):
                 btn_state[2], btn_state[3], btn_state[1], btn_state[0],
                 btn_state[14], btn_state[15], btn_state[16], btn_state[17]
             ]
+            self.get_logger().info(f"can100 payload: {can100}")
 
             # 0x101: R1(5), R2(7), R3(11), L1(4), L2(6), L3(10), pad, pad
             can101 = [
-                btn_state[5], btn_state[7], btn_state[11],
-                btn_state[4], btn_state[6], btn_state[10],
+                btn_state[5], btn_state[7], btn_state[12],
+                btn_state[4], btn_state[6], btn_state[11],
                 0, 0
             ]
 
             # 0x102: PS(12), SHARE(8), OPTIONS(9), pad x5
             can102 = [
-                btn_state[12], btn_state[8], btn_state[9], 0, 0, 0, 0, 0
+                btn_state[10], btn_state[8], btn_state[9], 0, 0, 0, 0, 0
             ]
 
             # Send messages
@@ -135,18 +161,63 @@ class CANNode(Node):
     def timer_callback(self):
         if not self.bus:
             return
-        msg = self.bus.recv(timeout=0.001)
-        if msg and msg.arbitration_id == 0x150 and len(msg.data) >= 6:
+        # 受信をバッファして短時間の間に来たフレームをまとめて表示する
+        msgs = []
+        # まずはすぐ受信可能なメッセージを全て取得（非ブロッキング）
+        while True:
+            m = self.bus.recv(timeout=0.0)
+            if not m:
+                break
+            msgs.append(m)
+
+        if not msgs:
+            return
+
+        # IDごとに最新フレームを取り出す（表示は優先順で整形）
+        latest = {}
+        for m in msgs:
+            latest[m.arbitration_id] = m
+
+        # 表示順: 0x160 を先に、その後 0x100/0x101/0x102、その他は昇順
+        preferred = [0x160, 0x100, 0x101, 0x102]
+        ordered_ids = [i for i in preferred if i in latest]
+        other_ids = sorted([i for i in latest.keys() if i not in preferred])
+        ordered_ids.extend(other_ids)
+
+        # 見やすいブロック出力（1行/ID）
+        self.get_logger().info('-' * 56)
+        for arb_id in ordered_ids:
+            m = latest[arb_id]
+            id_str = f"{arb_id:X}"
+            data_hex = ' '.join(f'{b:02X}' for b in m.data)
+            self.get_logger().info(f"can0  {id_str:<3}  [{len(m.data)}]  {data_hex}")
+
+        # 既知 ID の追加解析・publish
+        if 0x150 in latest:
+            m = latest[0x150]
             try:
-                x = struct.unpack('>h', msg.data[0:2])[0]
-                y = struct.unpack('>h', msg.data[2:4])[0]
-                theta = struct.unpack('>h', msg.data[4:6])[0]
-                scale = 10.0
-                arr = Float32MultiArray()
-                arr.data = [x / scale, y / scale, theta / scale]
-                self.publisher_.publish(arr)
+                if len(m.data) >= 6:
+                    x = struct.unpack('>h', m.data[0:2])[0]
+                    y = struct.unpack('>h', m.data[2:4])[0]
+                    theta = struct.unpack('>h', m.data[4:6])[0]
+                    scale = 10.0
+                    arr = Float32MultiArray()
+                    arr.data = [x / scale, y / scale, theta / scale]
+                    self.publisher_.publish(arr)
+                    self.get_logger().info(f"Parsed 0x150 -> x={arr.data[0]:.2f} y={arr.data[1]:.2f} theta={arr.data[2]:.2f}")
             except struct.error as e:
                 self.get_logger().error(f"受信データ解析エラー: {e}")
+
+        if 0x160 in latest:
+            m = latest[0x160]
+            try:
+                if len(m.data) >= 6:
+                    vals = []
+                    for i in range(0, min(6, len(m.data)), 2):
+                        vals.append(struct.unpack('>h', m.data[i:i+2])[0])
+                    self.get_logger().info(f"Parsed 0x160 shorts: {vals}")
+            except struct.error:
+                pass
 
 def main(args=None):
     rclpy.init(args=args)
