@@ -18,11 +18,10 @@ src/haru_2026_pkg　→　haru_2026_pkg　にプログラムあります。
 ls /dev/ttyACM*
 canモジュールのポートを調べるコマンドを毎回実行する。抜き差しするとポート番号が変わる可能性あり。
 # canを見るには
-
-sudo modprobe slcan
-sudo modprobe can
-sudo modprobe can_raw
-sudo slcand -o -c -s8 /dev/ttyACM0 can0
-sudo ip link set can0 up
-candump can0
+    sudo modprobe slcan
+    sudo modprobe can
+    sudo modprobe can_raw
+    sudo slcand -o -c -s8 /dev/ttyACM0 can0
+    sudo ip link set can0 up
+    candump can0
 一行ずつコマンドを実行すること。また、ls /dev/ttyACM*で刺さってるか確認
